@@ -24,7 +24,7 @@ const menuItemSchems=new mongoose.Schema({
      },
      num_sales:{
         typr:Number,
-        default:0,
+       // default:0,
      }
 
 })

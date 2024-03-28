@@ -1,0 +1,110 @@
+const express = require('express')
+const router = express();
+const  MenuItem=require('./../models/MenuItem');
+
+
+
+router.post('/',async(req,res)=>{
+    try{
+      const data=req.body 
+      const newMenuItem= new MenuItem(data);
+      const respose =await newMenuItem.save();
+      console.log("data save");
+      return res.status(200).jason(respose);
+  
+  
+    }
+    catch(err){
+      console.log(err);
+      res.status(500).json({error: 'Internal Server Error'});
+    }
+  })
+  
+router.get('/',async (req,res)=>{
+    try{
+      const data= await MenuItem.find()
+      console.log('data fetched')
+      res.status(200).json(data)
+         
+    }
+    catch(err){
+      console.log(err);
+      res.status(500).json({error: 'Internal Server Error'});
+    }
+  })
+
+
+
+  router.get('/:tastetype',async(req,res)=>{
+
+    try{
+      const Tastetype =req.params.tastetype;
+      if(Tastetype =="spicy"  ||Tastetype == "sweet" ||Tastetype =="sour"){
+         const response =await MenuItem.find({taste:Tastetype});
+         console.log("respnse fetched");
+         res.status(200).json(response);
+    
+      }
+      else{
+        res.status(404).jason ({error:"Invalid work type"});
+        }
+    }catch(err){
+      console.log(err);
+      res.status(500).json({error: 'Internal Server Error'});
+  
+    }
+   
+  })
+
+
+router.put('/:id',async(req,res)=>{
+    try{
+        const personId =req.params.id;
+        const updatedMenuData=req.body;
+
+
+        const response=await MenuItem.findByIdAndUpdate(personId,updatedMenuData,{
+            new:true,
+            runValidators:true,
+        })
+
+        if(!response){
+            return res.status(404).json({error:"Menu item not found"});
+        }
+        console.log("data updated");
+        res.status(200).json(response);
+
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error'});
+
+    }
+})
+  
+
+router.delete('/:id',async(req,res)=>{
+    try{
+        const personId =req.params.id;
+        const  response=await MenuItem.findByIdAndDelete(personId);
+        if(!response){
+            return res.status(404).json({error:"menu item not found not found"});
+        }
+        console.log("data deleted");
+        res.status(200).json({message: 'menuItem is  deleted succsesfully'});
+
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error'});
+
+    }
+})
+  
+
+
+
+  
+
+  module.exports=router;
+  
